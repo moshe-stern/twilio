@@ -8,11 +8,7 @@
     "outDir": "dist",
     "skipLibCheck": true,
     "sourceMap": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

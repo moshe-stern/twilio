@@ -4,7 +4,7 @@ import {
   ServerlessCallback,
   ServerlessFunctionSignature,
 } from "@twilio-labs/serverless-runtime-types/types";
-import { IClientResponseRecord } from "attain-aba-types";
+import { createClientResponse } from "attain-aba-shared";
 
 interface IClientResponse {
   ApiVersion: string;
@@ -34,21 +34,6 @@ enum EStatus {
   I_DO_NOT_KNOW_YET = 3,
 }
 
-async function doPost(data: {}, url: string) {
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    return response.ok;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 export const handler: ServerlessFunctionSignature = async function (
   context: Context & {
     AZURE_FUNCTION_URL?: string;
@@ -67,13 +52,12 @@ export const handler: ServerlessFunctionSignature = async function (
     return callback(null, twiml);
   }
 
-  const clientResponseRecord: Omit<IClientResponseRecord, "id"> = {
+  const res = await createClientResponse({
     phoneNumber: clientResponse.From,
     responseType: "OPEN ENROLLMENT 2025",
     body: clientResponse.Body,
     responseDate: new Date(),
-  };
-  const res = await doPost(clientResponseRecord, context.AZURE_FUNCTION_URL!);
+  });
   if (res) {
     twiml.message(
       "Thank you for your response! We’ve noted your selection and will reach out to you with any questions.",

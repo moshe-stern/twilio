@@ -5,6 +5,7 @@ import {
   ServerlessFunctionSignature,
 } from "@twilio-labs/serverless-runtime-types/types";
 import {
+  auth,
   createClientResponse,
   getClientByPhoneNumber,
 } from "attain-aba-shared";
@@ -81,10 +82,12 @@ export const handler: ServerlessFunctionSignature = async function (
     DEFAULT_COORDINATOR_NUMBER?: string;
     TWILIO_PHONE_NUMBER?: string;
     TWILIO_DEV_PHONE_NUMBER?: string;
+    DB_API_KEY?: string;
   },
   event: {},
   callback: ServerlessCallback,
 ) {
+  auth(context.DB_API_KEY!)
   const twiml = new Twilio.twiml.MessagingResponse();
   const clientResponse = event as IClientResponse;
   const clientsPhone = clientResponse.From.replace(/^\+1/, "");
